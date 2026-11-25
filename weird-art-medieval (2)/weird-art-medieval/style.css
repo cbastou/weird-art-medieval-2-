@@ -1,0 +1,300 @@
+/* ==========================================================
+   WEIRD ART MEDIEVAL — style
+   Polices (chargées depuis Google Fonts dans index.html) :
+   - titre       : Kameron Regular 86 px
+   - paragraphe  : Fragment Mono Regular 24 px
+   - légendes    : Chela One Regular 13 px
+   ========================================================== */
+
+:root {
+  --bg: #D7D7D7;
+  --ink: #000000;
+
+  --font-title:   "Kameron", Georgia, serif;
+  --font-mono:    "Fragment Mono", "Courier New", ui-monospace, monospace;
+  --font-caption: "Chela One", "Comic Sans MS", cursive;
+
+  --card-w: 345px;
+  --card-h: 425px;        /* desktop : 345 x 425 */
+  --flip-duration: 0.9s;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { background: var(--bg); }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Conteneur de page (1280 px max, fond gris, bordure noire) */
+.page {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  background: var(--bg);
+  border: 1px solid var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: clip;
+}
+
+.only-mobile { display: none; }
+
+/* ---------- Bandeau du haut ---------- */
+.topbar {
+  width: 100%;
+  height: 72px;
+  padding: 0 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  line-height: 36px;
+  text-transform: uppercase;
+}
+
+/* ---------- Titre ---------- */
+.hero {
+  width: 100%;
+  min-height: 310px;
+  padding: 0 51px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero__title {
+  margin: 0;
+  width: 100%;
+  font-family: var(--font-title);
+  font-weight: 400;
+  font-size: clamp(36px, 6.72vw, 86px);   /* 86 px à 1280 px de large */
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ---------- Paragraphe d'intro ---------- */
+.intro {
+  width: 100%;
+  padding: 66px 97px 0;
+}
+
+.intro p {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 36px;
+}
+
+/* ---------- Grille des cartes ---------- */
+.grid {
+  width: 100%;
+  padding: 60px 0 40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 92px;
+}
+
+/* La colonne du milieu est décalée vers le bas, comme dans la maquette */
+.col:nth-child(2) {
+  margin-top: 192px;
+  gap: 108px;
+}
+
+/* ---------- Carte qui se retourne au clic ---------- */
+.card {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  width: var(--card-w);
+  height: var(--card-h);
+  perspective: 1400px;
+  display: block;
+  container-type: inline-size;   /* tout l'intérieur se met à l'échelle avec la largeur de la carte (unités cqw) */
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 6px;
+}
+
+.card__inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform var(--flip-duration) cubic-bezier(0.45, 0, 0.2, 1);
+}
+
+/* Rotation horizontale : uniquement quand la classe est ajoutée par le clic */
+.card.is-flipped .card__inner {
+  transform: rotateY(180deg);
+}
+
+.card__face {
+  position: absolute;
+  inset: 0;
+  display: block;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.card__face--back {
+  transform: rotateY(180deg);
+}
+
+/* La "carte" visible : rectangle blanc aux coins arrondis.
+   Valeurs de la maquette en px, puis en cqw (même valeur à 345 px, proportionnelle en dessous). */
+.card__sheet {
+  position: absolute;
+  top: 25px;      top: 7.246cqw;
+  right: 49px;    right: 14.203cqw;
+  bottom: 34px;   bottom: 9.855cqw;
+  left: 49px;     left: 14.203cqw;
+  background: #FFFFFF;
+  border-radius: 15px;  border-radius: 4.348cqw;
+  overflow: hidden;
+}
+
+/* Le dos (photo) peut avoir un autre fond : le crocodile est en #F5F4F4 dans la maquette */
+.card__face--back .card__sheet { background: var(--sheet-photo, #FFFFFF); }
+
+/* Image : 214 x 208 px, à 16 px des bords de la carte */
+.card__sheet img {
+  position: absolute;
+  top: 16px;      top: 4.638cqw;
+  left: 16px;     left: 4.638cqw;
+  right: 16px;    right: 4.638cqw;
+  width: calc(100% - 32px);  width: calc(100% - 9.276cqw);
+  height: 208px;  height: 60.29cqw;
+  display: block;
+  object-fit: cover;
+  object-position: var(--pos, 50% 50%);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Cadrage : face avant = enluminure (--pm), dos = photo (--pp) */
+.card__face--front img { --pos: var(--pm, 50% 50%); }
+.card__face--back  img { --pos: var(--pp, 50% 50%); }
+
+/* Légende : Chela One 13 px / 15 px, centrée, couleur #120E0B */
+.card__caption {
+  position: absolute;
+  left: 18px;     left: 5.217cqw;
+  right: 18px;    right: 5.217cqw;
+  bottom: 16px;   bottom: 4.638cqw;
+  height: 109px;  height: 31.594cqw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-caption);
+  font-style: normal;
+  font-weight: 400;
+  font-synthesis: none;
+  font-size: 13px;    font-size: 3.768cqw;
+  line-height: 15px;  line-height: 4.348cqw;
+  color: #120E0B;
+}
+
+.footer {
+  width: 100%;
+  height: 142px;
+}
+
+/* ==========================================================
+   MOBILE / PORTRAIT (maquette 375 px) : une seule colonne.
+   Tout est exprimé en fonction de la largeur de l'écran (vw)
+   pour s'adapter à n'importe quel téléphone.
+   ========================================================== */
+@media (max-width: 1139px) {
+  :root {
+    --card-w: min(345px, calc(100vw - 30px));
+    --card-h: calc(var(--card-w) * 409 / 345);   /* mobile : 345 x 409 */
+  }
+
+  .only-desktop { display: none; }
+  .only-mobile  { display: inline; }
+
+  .topbar {
+    height: clamp(44px, 19.2vw, 72px);
+    padding: 0 clamp(2px, 1vw, 8px);
+    font-size: clamp(8px, 3.2vw, 14px);
+    line-height: 1.6;
+  }
+
+  .hero {
+    min-height: clamp(170px, 82.7vw, 310px);
+    padding: 0 clamp(16px, 13.6vw, 51px);
+  }
+
+  .hero__title {
+    font-size: clamp(26px, 10.7vw, 56px);
+    line-height: 1.1;
+    white-space: normal;
+  }
+
+  .intro {
+    padding: clamp(28px, 13.6vw, 51px) clamp(14px, 5.9vw, 40px) 0;
+  }
+
+  .intro p {
+    font-size: clamp(12px, 4.27vw, 20px);
+    line-height: 2;
+  }
+
+  .grid {
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(24px, 10.1vw, 38px);
+    padding: clamp(28px, 13.6vw, 51px) 0 40px;
+  }
+
+  /* Les colonnes disparaissent : les cartes se rangent dans l'ordre mobile (--m) */
+  .col,
+  .col:nth-child(2) {
+    display: contents;
+    margin-top: 0;
+  }
+
+  .card { order: var(--m); }
+
+  /* carte mobile plus basse (409 px) : légende un peu moins haute */
+  .card__caption {
+    height: 93px;  height: 26.957cqw;
+  }
+
+  .footer { height: clamp(60px, 37.9vw, 142px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card__inner { transition-duration: 0.01s; }
+}
